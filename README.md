@@ -41,6 +41,18 @@ You can also specify custom input/output paths:
 ./scripts/inject.sh -i ~/Downloads/theta.ipa -o ~/Desktop/theta_cracked.ipa
 ```
 
+For a release build with debug symbols stripped (recommended for distribution):
+
+```bash
+./scripts/inject.sh -r
+```
+
+To build only the dylib without injecting it into an IPA:
+
+```bash
+./scripts/inject.sh -d -r
+```
+
 ## Usage
 
 After building, sign `output/theta_cracked.ipa` with your preferred sideloading tool and install it. The first time the app launches it shows a welcome popup; activation is triggered automatically once the popup is dismissed. On later launches, place three fingers on the screen and hold for 2 seconds to trigger activation.

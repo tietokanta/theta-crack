@@ -20,26 +20,34 @@ print_usage() {
     cat << EOF
 Usage: $(basename "$0") [options]
 
-Builds the ThetaCrack tweak and injects it into an IPA.
+Builds the ThetaCrack tweak and optionally injects it into an IPA.
 
 Options:
+  -d, --dylib-only       Build only the dylib, skip IPA injection
   -i, --ipa <path>       Path to the input IPA (default: assets/theta.ipa)
   -o, --output <path>    Path for the cracked IPA (default: output/theta_cracked.ipa)
+  -r, --release          Build a release dylib (strips debug symbols)
   -h, --help             Show this help message
 
 Examples:
-  $(basename "$0")
-  $(basename "$0") -i ~/Downloads/theta.ipa
-  $(basename "$0") -i ~/Downloads/theta.ipa -o ~/Desktop/cracked.ipa
+  $(basename "$0") -d
+  $(basename "$0") -d -r
+  $(basename "$0") -i ~/Downloads/theta.ipa -o ~/Desktop/cracked.ipa -r
 EOF
 }
 
 # Parse arguments
 IPA="$DEFAULT_IPA"
 OUTPUT_IPA="$DEFAULT_OUTPUT"
+RELEASE=0
+DYLIB_ONLY=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        -d|--dylib-only)
+            DYLIB_ONLY=1
+            shift
+            ;;
         -i|--ipa)
             IPA="$2"
             shift 2
@@ -47,6 +55,10 @@ while [[ $# -gt 0 ]]; do
         -o|--output)
             OUTPUT_IPA="$2"
             shift 2
+            ;;
+        -r|--release)
+            RELEASE=1
+            shift
             ;;
         -h|--help)
             print_usage
@@ -59,6 +71,29 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Build tweak first (needed for both modes)
+echo -e "${BOLD}ThetaCrack Builder${NC}"
+echo -e "${BLUE}[1/6]${NC} Building tweak..."
+cd "$PROJECT_DIR"
+make clean >/dev/null
+if [[ "$RELEASE" -eq 1 ]]; then
+    echo -e "  ${YELLOW}Release build (debug symbols stripped)${NC}"
+    make FINALPACKAGE=1 >/dev/null
+    DYLIB_PATH="$PROJECT_DIR/.theos/obj/$DYLIB_NAME"
+else
+    make >/dev/null
+    DYLIB_PATH="$PROJECT_DIR/.theos/obj/debug/$DYLIB_NAME"
+fi
+
+if [[ "$DYLIB_ONLY" -eq 1 ]]; then
+    mkdir -p "$PROJECT_DIR/output"
+    cp "$DYLIB_PATH" "$PROJECT_DIR/output/$DYLIB_NAME"
+    DYLIB_SIZE=$(du -h "$PROJECT_DIR/output/$DYLIB_NAME" | cut -f1)
+    echo ""
+    echo -e "${GREEN}Done!${NC} Dylib: $PROJECT_DIR/output/$DYLIB_NAME ($DYLIB_SIZE)"
+    exit 0
+fi
 
 # Resolve absolute paths
 mkdir -p "$(dirname "$OUTPUT_IPA")"
@@ -73,16 +108,9 @@ fi
 
 WORK_DIR="$PROJECT_DIR/_build_tmp"
 
-echo -e "${BOLD}ThetaCrack Builder${NC}"
 echo "  Input IPA:  $IPA"
 echo "  Output:     $OUTPUT_IPA"
 echo ""
-
-# Step 1: Build tweak
-echo -e "${BLUE}[1/6]${NC} Building tweak..."
-cd "$PROJECT_DIR"
-make clean >/dev/null
-make >/dev/null
 
 # Step 2: Extract IPA
 echo -e "${BLUE}[2/6]${NC} Extracting IPA..."
@@ -95,7 +123,7 @@ TARGET_BINARY="$APP_DIR/Frameworks/Theta.dylib"
 
 # Step 3: Inject tweak
 echo -e "${BLUE}[3/6]${NC} Injecting tweak..."
-cp "$PROJECT_DIR/.theos/obj/debug/$DYLIB_NAME" "$APP_DIR/$DYLIB_NAME"
+cp "$DYLIB_PATH" "$APP_DIR/$DYLIB_NAME"
 cp "$PROJECT_DIR/layout/Library/MobileSubstrate/DynamicLibraries/$PLIST_NAME" "$APP_DIR/$PLIST_NAME"
 
 # Step 4: Patch target dylib

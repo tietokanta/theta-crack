@@ -10,7 +10,7 @@ Telegram: [t.me/jailbreakland](https://t.me/jailbreakland)
 
 - macOS with [Theos](https://theos.dev/) installed
 - `ldid` and `insert_dylib` available in your PATH
-- A decrypted copy of **Theta v6.0** named `theta.ipa` placed in `assets/theta.ipa`
+- A copy of **Theta v6.0** named `theta.ipa` placed in `assets/theta.ipa` (get it from [t.me/jailbreakland](https://t.me/jailbreakland))
 
 ## How it works
 

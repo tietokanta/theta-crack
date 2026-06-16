@@ -1,0 +1,9 @@
+Package: com.jailbreakland.thetacrack
+Name: ThetaCrack
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Authentication bypass tweak
+Maintainer: jailbreakland
+Author: jailbreakland
+Section: Tweaks

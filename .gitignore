@@ -1,0 +1,25 @@
+# Theos build artifacts
+.theos/
+packages/
+obj/
+
+# Temporary extraction/work dirs
+_build_tmp/
+_build_tmp_*/
+
+# macOS
+.DS_Store
+
+# Generated output binaries
+output/*.ipa
+output/*.deb
+output/*.dylib
+
+# Large input assets (track with LFS if needed)
+assets/*.ipa
+assets/*.app
+assets/Payload/
+assets/theta/
+
+# Private-only research/tools folder
+extras/

@@ -1,4 +1,4 @@
-# ThetaCrack
+# Theta Auth Bypass POC
 
 A research project that demonstrates how to bypass the authentication flow in **Theta v6.0** by intercepting and faking the local network requests used for license verification.
 

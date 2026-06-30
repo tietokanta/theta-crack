@@ -85,7 +85,7 @@ static void showWelcomeAlertIfNeeded(void) {
     if (g_welcomeWindow) return;
 
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"ThetaCrack"
-                                                                   message:@"welcome to the ThetaCrack by t.me/jailbreakland\n\nUse any credentials on the login page and it works."
+                                                                   message:@"Welcome to the Theta by t.me/jailbreakland\n\nHow to Log in:\n1. Hold down the home button to open the Theta menu.\n2. Enter any email and license key to log in.\n3. Have fun."
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [defaults setBool:YES forKey:@"ThetaCrackWelcomeShown"];
